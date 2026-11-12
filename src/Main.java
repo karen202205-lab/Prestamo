@@ -14,8 +14,7 @@ public class Main {
         vista.mostrarResultado(r);
     }
 
-    public static void main(String[] args) {
-        PrestamoController c = new PrestamoController();
+    static void procesarPeticiones(PrestamoController c) {
 
         paso("2 mar - Camila (E-101) pide P-01", c.prestar("E-101", "P-01", d(2)));
         paso("2 mar - Camila (E-101) pide M-01", c.prestar("E-101", "M-01", d(2)));
@@ -46,7 +45,26 @@ public class Main {
         paso("9 mar - Andrés (E-102) pide P-01", c.prestar("E-102", "P-01", d(9)));
         paso("9 mar - Roberto (D-201) pide K-02", c.prestar("D-201", "K-02", d(9)));
 
+    }
+
+    static void mostrarResumen(PrestamoController c) {
         vista.mostrarLista("DEUDA POR PERSONA", c.consultarDeudas());
         vista.mostrarLista("LOG", c.consultarLog());
+    }
+
+    public static void main(String[] args) {
+        PrestamoController c = new PrestamoController();
+        boolean seguir = true;
+        while (seguir) {
+            switch (vista.pedirOpcion()) {
+                case "1" -> { procesarPeticiones(c); mostrarResumen(c); }
+                case "2" -> paso("Préstamo", c.prestar(vista.pedirTexto("Código de usuario"), vista.pedirTexto("Código de equipo"), vista.pedirFecha("Fecha")));
+                case "3" -> paso("Devolución", c.devolver(vista.pedirTexto("Código de equipo"), vista.pedirFecha("Fecha")));
+                case "4" -> paso("Reserva", c.reservar(vista.pedirTexto("Código de usuario"), vista.pedirTexto("Código de equipo"), vista.pedirFecha("Fecha")));
+                case "5" -> mostrarResumen(c);
+                case "0" -> seguir = false;
+                default -> vista.mostrarMensaje("Opción no válida.");
+            }
+        }
     }
 }
